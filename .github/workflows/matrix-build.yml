@@ -1,0 +1,41 @@
+name: Multi-Platform Matrix Build (a1a5967)
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    name: Build for Python ${{ matrix.python-version }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['3.9', '3.10', '3.11']
+        # To ensure at least 3 variants, this will produce 9 parallel jobs
+        # (you can reduce if needed to only one axis, e.g., python-version)
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: matrix-a1a5967
+        run: echo "Building for Python ${{ matrix.python-version }} on ${{ matrix.os }}"
+
+      - name: Generate build artifact
+        run: |
+          echo "Build output for Python ${{ matrix.python-version }} on ${{ matrix.os }}" > output.txt
+          echo "Timestamp: $(date)" >> output.txt
+          echo "Runner: ${{ runner.os }}" >> output.txt
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-a1a5967-${{ matrix.os }}-py${{ matrix.python-version }}
+          path: output.txt
